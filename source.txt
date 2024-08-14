@@ -1,0 +1,2 @@
+https://reacthustle.com/blog/how-to-create-react-multiple-file-upload-using-nextjs-and-typescript
+https://github.com/jmarioste/next-multiple-file-upload-tutorial
