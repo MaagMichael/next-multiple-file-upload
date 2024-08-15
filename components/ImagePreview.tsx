@@ -23,7 +23,7 @@ const ImagePreview = ({ images, isDone }: Props) => {
                 fill
               />
             </div>
-            <p className="text-sm truncate ">{image.name} {isDone ? "- uploaded": null}</p>
+            <p className="text-sm truncate ">{image.name} {isDone ? " - uploaded": null}</p>
 
           </div>
         );

@@ -17,6 +17,7 @@ const FileUploadForm = () => {
       //convert `FileList` to `File[]`
       const _files = Array.from(e.target.files);
       setImages(_files);
+      setIsDone(false);
     }
   };
 
