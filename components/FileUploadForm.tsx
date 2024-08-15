@@ -6,6 +6,8 @@ import ImagePreview from "./ImagePreview";
 import axios from "axios";
 import classNames from "classnames";
 
+
+
 const FileUploadForm = () => {
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -33,12 +35,16 @@ const FileUploadForm = () => {
 
     try {
       // upload files as formData to destination like in ts file under `app/api/upload/route.ts`
+      const uploadUrl = process.env.NEXT_PUBLIC_API_UPLOAD_URL;
+      if (!uploadUrl) {
+        throw new Error("Upload URL is not defined");
+      }
       // Make the POST request using axios
-      const response = await axios.post("/api/upload", formData);
+      const response = await axios.post(uploadUrl, formData);
       // Log the response to the console
       console.log("Upload response:", response.data);
 
-      setUploadStatus("Upload successfull!");
+      setUploadStatus("Upload successful!");
       setIsDone(true);
       
 
