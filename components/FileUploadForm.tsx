@@ -10,6 +10,7 @@ const FileUploadForm = () => {
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>("");
+  const [isDone, setIsDone] = useState(false);
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -36,7 +37,9 @@ const FileUploadForm = () => {
       // Log the response to the console
       console.log("Upload response:", response.data);
 
-      setUploadStatus("Files uploaded successfully!");
+      setUploadStatus("Upload successfull!");
+      setIsDone(true);
+      
 
       // Set a timeout to clear the message after 3 seconds
       const timer = setTimeout(() => {
@@ -82,7 +85,7 @@ const FileUploadForm = () => {
           </p>
         )}
       </div>
-      <ImagePreview images={images} />
+      <ImagePreview images={images} isDone={isDone} />
     </form>
   );
 };

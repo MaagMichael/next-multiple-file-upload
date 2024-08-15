@@ -4,9 +4,11 @@ import Image from "next/image";
 
 type Props = {
   images: File[];
+  isDone: boolean;
 };
 
-const ImagePreview = ({ images }: Props) => {
+const ImagePreview = ({ images, isDone }: Props) => {
+  // console.log("isDone2", isDone);
   return (
     <div className="mt-4 flex flex-wrap  gap-4">
       {images.map((image) => {
@@ -21,7 +23,8 @@ const ImagePreview = ({ images }: Props) => {
                 fill
               />
             </div>
-            <p className="text-sm truncate">{image.name}</p>
+            <p className="text-sm truncate ">{image.name} {isDone ? "- uploaded": null}</p>
+
           </div>
         );
       })}
