@@ -6,9 +6,8 @@ import ImagePreview from "./ImagePreview";
 import axios from "axios";
 import classNames from "classnames";
 
-
-
 const FileUploadForm = () => {
+  const [userPath, setUserPath] = useState<string>("subfolder");
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>("");
@@ -30,6 +29,8 @@ const FileUploadForm = () => {
     images.forEach((image, i) => {
       formData.append(image.name, image);
     });
+    formData.append("userPath", userPath);
+
     setUploading(true);
     setUploadStatus(null);
 
@@ -46,7 +47,6 @@ const FileUploadForm = () => {
 
       setUploadStatus("Upload successful!");
       setIsDone(true);
-      
 
       // Set a timeout to clear the message after 3 seconds
       const timer = setTimeout(() => {
@@ -54,7 +54,6 @@ const FileUploadForm = () => {
       }, 3000);
       // Clean up the timer if the component unmounts
       return () => clearTimeout(timer);
-
     } catch (error) {
       setUploadStatus("Error uploading files. Please try again.");
       console.error("Upload error:", error);
@@ -63,37 +62,49 @@ const FileUploadForm = () => {
     }
   };
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
-      <div className="flex justify-between">
-        <CustomFileSelector
-        //   accept="image/png, image/jpeg, image/webp"
-          accept="image/*"
-          onChange={handleFileSelected}
-        />
-        <button
-          type="submit"
-          className={classNames({
-            "bg-violet-50 text-violet-500 hover:bg-violet-100 px-4 py-2 rounded-md":
-              true,
-            "disabled pointer-events-none opacity-40": uploading,
-          })}
-          disabled={uploading}
-        >
-          Upload
-        </button>
-        {uploading && <p>Uploading...</p>}
-        {uploadStatus && (
-          <p
-            className={
-              uploadStatus.includes("Error") ? "text-red-500" : "text-green-500"
-            }
+    <div className="w-full flex flex-col gap-8">
+      <input
+        type="text"
+        value={userPath}
+        onChange={(e) => setUserPath(e.target.value)}
+        className="text-violet-500 border border-gray-300 rounded-md px-2"
+        placeholder="Enter subfolder path"
+      />
+
+      <form className="w-full" onSubmit={handleSubmit}>
+        <div className="flex justify-between">
+          <CustomFileSelector
+            //   accept="image/png, image/jpeg, image/webp"
+            accept="image/*"
+            onChange={handleFileSelected}
+          />
+          <button
+            type="submit"
+            className={classNames({
+              "bg-violet-50 text-violet-500 hover:bg-violet-100 px-4 py-2 rounded-md":
+                true,
+              "disabled pointer-events-none opacity-40": uploading,
+            })}
+            disabled={uploading}
           >
-            {uploadStatus}
-          </p>
-        )}
-      </div>
-      <ImagePreview images={images} isDone={isDone} />
-    </form>
+            Upload
+          </button>
+          {uploading && <p>Uploading...</p>}
+          {uploadStatus && (
+            <p
+              className={
+                uploadStatus.includes("Error")
+                  ? "text-red-500"
+                  : "text-green-500"
+              }
+            >
+              {uploadStatus}
+            </p>
+          )}
+        </div>
+        <ImagePreview images={images} isDone={isDone} />
+      </form>
+    </div>
   );
 };
 

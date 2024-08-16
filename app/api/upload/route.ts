@@ -1,20 +1,50 @@
 import fs from "fs";
+import path from "path";
+
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const formData = await req.formData();
   const formDataEntryValues = Array.from(formData.values());
-  for (const formDataEntryValue of formDataEntryValues) {
-    if (
-      typeof formDataEntryValue === "object" &&
-      "arrayBuffer" in formDataEntryValue
-    ) {
-      const file = formDataEntryValue as unknown as Blob;
-      const buffer = Buffer.from(await file.arrayBuffer());
-      //   distination to store incoming files
-      fs.writeFileSync(`public/${file.name}`, buffer);
+  // console.log("formDataEntryValues", formDataEntryValues);
+
+  const userPath = formData.get("userPath") as string;
+  // console.log("userPath", userPath);
+
+  // Create the userPath directory if it doesn't exist
+  if (userPath) {
+    const fullPath = path.join(process.cwd(), "public", userPath);
+    // console.log("fullPath", fullPath);
+
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
+
+    // Use fullPath when writing files
+    for (const formDataEntryValue of formDataEntryValues) {
+      if (
+        typeof formDataEntryValue === "object" &&
+        "arrayBuffer" in formDataEntryValue
+      ) {
+        const file = formDataEntryValue as unknown as Blob;
+        const buffer = Buffer.from(await file.arrayBuffer());
+        fs.writeFileSync(path.join(fullPath, file.name), buffer);
+      }
+    }
+  } else {
+    // Use the original public directory if no userPath is provided
+    for (const formDataEntryValue of formDataEntryValues) {
+      if (
+        typeof formDataEntryValue === "object" &&
+        "arrayBuffer" in formDataEntryValue
+      ) {
+        const file = formDataEntryValue as unknown as Blob;
+        const buffer = Buffer.from(await file.arrayBuffer());
+        fs.writeFileSync(`public/${file.name}`, buffer);
+      }
     }
   }
+
   //   response to client if successful
   return NextResponse.json({ success: true });
 }
