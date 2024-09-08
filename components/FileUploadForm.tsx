@@ -7,12 +7,13 @@ import axios from "axios";
 import classNames from "classnames";
 
 const FileUploadForm = () => {
-  const [userPath, setUserPath] = useState<string>("subfolder");
+  const [userPath, setUserPath] = useState<string>("folder");
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>("");
   const [isDone, setIsDone] = useState(false);
 
+  // function for file selection
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       //convert `FileList` to `File[]`
@@ -22,6 +23,16 @@ const FileUploadForm = () => {
     }
   };
 
+  // function for changing file names
+  const handleNameChange = (oldName: string, newName: string) => {
+    setImages((prevImages) =>
+      prevImages.map((img) =>
+        img.name === oldName ? new File([img], newName, { type: img.type }) : img
+      )
+    );
+  };
+
+  // function for file upload
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -62,14 +73,15 @@ const FileUploadForm = () => {
     }
   };
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-4">
       <input
         type="text"
         value={userPath}
         onChange={(e) => setUserPath(e.target.value)}
-        className="text-violet-500 border border-gray-300 rounded-md px-2"
-        placeholder="Enter subfolder path"
+        className="text-violet-500 border border-gray-300 rounded-md px-2 w-96"
+        placeholder="Enter subfolder path if required"
       />
+      <p>e.g. folder/subfolder is possible</p>
 
       <form className="w-full" onSubmit={handleSubmit}>
         <div className="flex justify-between">
@@ -102,7 +114,7 @@ const FileUploadForm = () => {
             </p>
           )}
         </div>
-        <ImagePreview images={images} isDone={isDone} />
+        <ImagePreview images={images} isDone={isDone} onNameChange={handleNameChange}/>
       </form>
     </div>
   );
